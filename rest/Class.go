@@ -27,13 +27,13 @@ func GetClass(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	studentBytes, err := json.Marshal(class)
+	classBytes, err := json.Marshal(class)
 
 	if hasError(rw, err, "Internal Issue") {
 		return
 	}
 
-	rw.Write(studentBytes)
+	rw.Write(classBytes)
 }
 
 func PostClass(rw http.ResponseWriter, r *http.Request) {
@@ -69,14 +69,15 @@ func UpdateClass(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var class entity.Class
-	err = json.Unmarshal(bodyBytes, &class)
+	var inputClass entity.Class
+	err = json.Unmarshal(bodyBytes, &inputClass)
 
 	if hasError(rw, err, "Internal Issue") {
 		return
 	}
 
-	db.GetDB().Update(&class)
+	var class entity.Class
+	db.GetDB().Model(&class).Updates(inputClass)
 
 	fmt.Println(class)
 	rw.Write(bodyBytes)
@@ -93,5 +94,30 @@ func DeleteClass(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rw.Write([]byte("Record successfully"))
+	rw.Write([]byte("Record successfully deleted"))
+}
+
+func ListOfClasses(rw http.ResponseWriter, r *http.Request) {
+
+	var class entity.Class
+
+	result := db.GetDB().Find(&class)
+
+	if result.RecordNotFound() {
+		http.Error(rw, "No record found", http.StatusInternalServerError)
+		return
+	}
+
+	if result.Error != nil {
+		http.Error(rw, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	classBytes, err := json.Marshal(class)
+
+	if hasError(rw, err, "Internal Issue") {
+		return
+	}
+
+	rw.Write(classBytes)
 }

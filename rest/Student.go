@@ -71,14 +71,15 @@ func UpdateStudent(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var student entity.Student
-	err = json.Unmarshal(bodyBytes, &student)
+	var inputStudent entity.Student
+	err = json.Unmarshal(bodyBytes, &inputStudent)
 
 	if hasError(rw, err, "Internal Issue") {
 		return
 	}
 
-	db.GetDB().Update(&student)
+	var student entity.Student
+	db.GetDB().Model(&student).Updates(inputStudent)
 
 	fmt.Println(student)
 	rw.Write(bodyBytes)
@@ -95,7 +96,7 @@ func DeleteStudent(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rw.Write([]byte("Record successfully"))
+	rw.Write([]byte("Record successfully deleted"))
 }
 
 func hasError(rw http.ResponseWriter, err error, message string) bool {
@@ -108,4 +109,29 @@ func hasError(rw http.ResponseWriter, err error, message string) bool {
 	}
 
 	return false
+}
+
+func ListOfStudents(rw http.ResponseWriter, r *http.Request) {
+
+	var students []entity.Student
+
+	result := db.GetDB().Find(&students)
+
+	if result.RecordNotFound() {
+		http.Error(rw, "No record found", http.StatusInternalServerError)
+		return
+	}
+
+	if result.Error != nil {
+		http.Error(rw, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	studentBytes, err := json.Marshal(students)
+
+	if hasError(rw, err, "Internal Issue") {
+		return
+	}
+
+	rw.Write(studentBytes)
 }
