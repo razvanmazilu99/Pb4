@@ -11,7 +11,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 func main() {
 
 	err := godotenv.Load(".env")
@@ -32,7 +31,7 @@ func main() {
 	var endpoint2 = "/class"
 
 	router := chi.NewRouter()
-	router.Route("/" + config.GetConfig().APPVersion, func(r chi.Router) {
+	router.Route("/"+config.GetConfig().APPVersion, func(r chi.Router) {
 		r.Get(endpoint1, rest.GetStudent)
 		r.Post(endpoint1, rest.PostStudent)
 		r.Delete(endpoint1, rest.DeleteStudent)
@@ -46,8 +45,8 @@ func main() {
 		r.Get(endpoint1, rest.ListOfStudents)
 		r.Get(endpoint2, rest.ListOfClasses)
 
-	//	r.Post("/enroll", rest.Enroll)
+		r.Post("/enroll", rest.EnrollStudent)
 	})
-	http.ListenAndServe(":" + config.GetConfig().Port, router)
-	
+	http.ListenAndServe(":"+config.GetConfig().Port, router)
+
 }

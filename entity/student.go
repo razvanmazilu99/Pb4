@@ -5,5 +5,5 @@ type Student struct {
 	FirstName string   `gorm:"type: varchar(100); not null" json:"first_name"`
 	LastName  string   `gorm:"type: varchar(100); not null"`
 	Age       int      `gorm:"type: int; not null"`
-	Classes   []*Class `gorm:"many2many:StudentClasses"`
+	Classes   []*Class `gorm:"many2many:studentclasses"`
 }

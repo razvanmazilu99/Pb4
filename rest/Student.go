@@ -135,3 +135,32 @@ func ListOfStudents(rw http.ResponseWriter, r *http.Request) {
 
 	rw.Write(studentBytes)
 }
+
+func EnrollStudent(rw http.ResponseWriter, r *http.Request) {
+
+	reqBody := r.Body
+
+	bodyBytes, err := ioutil.ReadAll(reqBody)
+
+	if hasError(rw, err, "Internal Issue") {
+		return
+	}
+
+	var student entity.Student
+	err = json.Unmarshal(bodyBytes, &student)
+
+	if hasError(rw, err, "Internal Issue") {
+		return
+	}
+
+	//db.GetDB().Preload("classes").Find(&student)
+	res := db.GetDB().Model(student).Association("classes").Append(student.Classes) 
+
+	if res.Error != nil {
+		http.Error(rw, res.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println(student)
+	rw.Write(bodyBytes)
+}

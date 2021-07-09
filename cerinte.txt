@@ -19,3 +19,13 @@ id
 title
 description
 List<Student>
+
+Enroll:
+
+{
+    id: 
+    classes:[
+        {class_id},
+        {class_id}
+    ]
+}

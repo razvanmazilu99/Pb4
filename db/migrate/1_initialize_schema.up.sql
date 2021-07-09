@@ -16,14 +16,11 @@ CREATE TABLE Classes (
 );
 
 CREATE TABLE StudentClasses (
-    StudentID varchar(10) NOT NULL,
-    ClassID varchar(10) NOT NULL,
-    CONSTRAINT StudentClasses_PK PRIMARY KEY (
-        StudentID,
-        ClassID
-    ), 
-    CONSTRAINT Student_FK FOREIGN KEY (StudentID) REFERENCES Students(id),
-    CONSTRAINT Class_FK FOREIGN KEY (ClassID) REFERENCES Classes(id)
+    student_id varchar(10) NOT NULL,
+    class_id varchar(10) NOT NULL,
+    CONSTRAINT Student_Classes_PK PRIMARY KEY (student_id, class_id), 
+    CONSTRAINT Student_FK FOREIGN KEY (student_id) REFERENCES Students(id),
+    CONSTRAINT Class_FK FOREIGN KEY (class_id) REFERENCES Classes(id)
 );
 
 COMMIT;
