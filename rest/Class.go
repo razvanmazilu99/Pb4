@@ -7,17 +7,15 @@ import (
 	"net/http"
 	"pb4/db"
 	"pb4/entity"
-
-	"github.com/sirupsen/logrus"
 )
 
-func GetStudent(rw http.ResponseWriter, r *http.Request) {
+func GetClass(rw http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 
-	var student entity.Student
+	var class entity.Class
 
-	result := db.GetDB().Where("id=?", id).Find(&student)
+	result := db.GetDB().Where("id=?", id).Find(&class)
 
 	if result.RecordNotFound() {
 		http.Error(rw, "No record found", http.StatusInternalServerError)
@@ -29,7 +27,7 @@ func GetStudent(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	studentBytes, err := json.Marshal(student)
+	studentBytes, err := json.Marshal(class)
 
 	if hasError(rw, err, "Internal Issue") {
 		return
@@ -38,7 +36,7 @@ func GetStudent(rw http.ResponseWriter, r *http.Request) {
 	rw.Write(studentBytes)
 }
 
-func PostStudent(rw http.ResponseWriter, r *http.Request) {
+func PostClass(rw http.ResponseWriter, r *http.Request) {
 
 	reqBody := r.Body
 
@@ -48,20 +46,20 @@ func PostStudent(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var student entity.Student
-	err = json.Unmarshal(bodyBytes, &student)
+	var class entity.Class
+	err = json.Unmarshal(bodyBytes, &class)
 
 	if hasError(rw, err, "Internal Issue") {
 		return
 	}
 
-	db.GetDB().Create(&student)
+	db.GetDB().Create(&class)
 
-	fmt.Println(student)
+	fmt.Println(class)
 	rw.Write(bodyBytes)
 }
 
-func UpdateStudent(rw http.ResponseWriter, r *http.Request) {
+func UpdateClass(rw http.ResponseWriter, r *http.Request) {
 
 	reqBody := r.Body
 
@@ -71,24 +69,24 @@ func UpdateStudent(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var student entity.Student
-	err = json.Unmarshal(bodyBytes, &student)
+	var class entity.Class
+	err = json.Unmarshal(bodyBytes, &class)
 
 	if hasError(rw, err, "Internal Issue") {
 		return
 	}
 
-	db.GetDB().Update(&student)
+	db.GetDB().Update(&class)
 
-	fmt.Println(student)
+	fmt.Println(class)
 	rw.Write(bodyBytes)
 }
 
-func DeleteStudent(rw http.ResponseWriter, r *http.Request) {
+func DeleteClass(rw http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 
-	result := db.GetDB().Delete(&entity.Student{}, "id=?", id)
+	result := db.GetDB().Delete(&entity.Class{}, "id=?", id)
 
 	if result.Error != nil {
 		http.Error(rw, "Internal error. Please try again after a while", http.StatusInternalServerError)
@@ -96,16 +94,4 @@ func DeleteStudent(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	rw.Write([]byte("Record successfully"))
-}
-
-func hasError(rw http.ResponseWriter, err error, message string) bool {
-	logger := new(logrus.Entry)
-
-	if err != nil {
-		logger.WithError(err).Error(message)
-		rw.Write([]byte(message))
-		return true
-	}
-
-	return false
 }
