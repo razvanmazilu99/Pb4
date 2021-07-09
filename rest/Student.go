@@ -61,6 +61,29 @@ func PostStudent(rw http.ResponseWriter, r *http.Request) {
 	rw.Write(bodyBytes)
 }
 
+func UpdateStudent(rw http.ResponseWriter, r *http.Request) {
+
+	reqBody := r.Body
+
+	bodyBytes, err := ioutil.ReadAll(reqBody)
+
+	if hasError(rw, err, "Internal Issue") {
+		return
+	}
+
+	var student entity.Student
+	err = json.Unmarshal(bodyBytes, &student)
+
+	if hasError(rw, err, "Internal Issue") {
+		return
+	}
+
+	db.GetDB().Update(&student)
+
+	fmt.Println(student)
+	rw.Write(bodyBytes)
+}
+
 func DeleteStudent(rw http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -71,7 +94,7 @@ func DeleteStudent(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Internal error. Please try again after a while", http.StatusInternalServerError)
 		return
 	}
-	
+
 	rw.Write([]byte("Record successfully"))
 }
 
