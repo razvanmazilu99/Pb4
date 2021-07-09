@@ -1,0 +1,21 @@
+Problem 4
+
+Endpoints:
+student - create, get, update, delete
+students - return all students
+class - same as student
+classes - return all the classes
+enroll
+
+Student:
+id
+lastName
+firstName
+age
+List<Class>
+
+Class:
+id
+title
+description
+List<Student>
